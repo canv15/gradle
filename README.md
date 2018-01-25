@@ -7,6 +7,8 @@ For more information about Gradle, please visit: https://gradle.org
 This project adheres to the [Gradle Code of Conduct](https://gradle.org/conduct/). By participating, you are expected to uphold this code.
 
 ## Downloading
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fcanv15%2Fgradle.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fcanv15%2Fgradle?ref=badge_shield)
+
 
 You can download released versions and nightly build artifacts from: https://gradle.org/downloads
 
@@ -29,3 +31,7 @@ To create a full installation (includes docs):
 ## Contributing
 
 If you're looking to contribute to Gradle or provide a patch/pull request, you can find more info [here](https://github.com/gradle/gradle/blob/master/.github/CONTRIBUTING.md).
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fcanv15%2Fgradle.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fcanv15%2Fgradle?ref=badge_large)
