@@ -18,10 +18,13 @@ package org.gradle.api.internal.artifacts.ivyservice.resolveengine.graph.builder
 
 import org.gradle.api.artifacts.ModuleIdentifier;
 import org.gradle.api.artifacts.component.ComponentSelector;
+import org.gradle.api.artifacts.result.ComponentSelectionCause;
 import org.gradle.api.artifacts.result.ComponentSelectionDescriptor;
 import org.gradle.api.artifacts.result.ComponentSelectionReason;
 import org.gradle.api.internal.artifacts.ResolvedVersionConstraint;
 import org.gradle.api.internal.artifacts.ivyservice.resolveengine.graph.DependencyGraphSelector;
+import org.gradle.api.internal.artifacts.ivyservice.resolveengine.result.ComponentSelectionDescriptorInternal;
+import org.gradle.api.internal.artifacts.ivyservice.resolveengine.result.DefaultComponentSelectionDescriptor;
 import org.gradle.api.internal.artifacts.ivyservice.resolveengine.result.VersionSelectionReasons;
 import org.gradle.internal.component.model.ComponentResolveMetadata;
 import org.gradle.internal.component.model.DependencyMetadata;
@@ -75,7 +78,7 @@ class SelectorState implements DependencyGraphSelector {
     }
 
     public ComponentSelectionReason getSelectionReason() {
-        return selected == null ? VersionSelectionReasons.of(Collections.<ComponentSelectionDescriptor>singletonList(idResolveResult.getSelectionDescription())) : selected.getSelectionReason();
+        return selected == null ? VersionSelectionReasons.of(Collections.<ComponentSelectionDescriptor>singletonList(doGetDescription())) : selected.getSelectionReason();
     }
 
     public ComponentState getSelected() {
@@ -106,12 +109,21 @@ class SelectorState implements DependencyGraphSelector {
 
         selected = resolveState.getRevision(idResolveResult.getModuleVersionId());
         selected.selectedBy(this);
-        selected.addCause(idResolveResult.getSelectionDescription());
+        selected.addCause(doGetDescription());
         targetModule = selected.getModule();
         targetModule.addSelector(this);
         versionConstraint = idResolveResult.getResolvedVersionConstraint();
 
         return selected;
+    }
+
+    private ComponentSelectionDescriptorInternal doGetDescription() {
+        ComponentSelectionDescriptorInternal selectionDescription = idResolveResult.getSelectionDescription();
+        if (selectionDescription.getCause() ==  ComponentSelectionCause.REQUESTED && dependencyMetadata.isPending()) {
+            selectionDescription = new DefaultComponentSelectionDescriptor(ComponentSelectionCause.CONSTRAINT,
+                selectionDescription.hasCustomDescription() ? selectionDescription.getDescription() : ComponentSelectionCause.CONSTRAINT.getDefaultReason());
+        }
+        return selectionDescription;
     }
 
     public void restart(ComponentState moduleRevision) {
